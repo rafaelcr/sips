@@ -133,7 +133,7 @@ used through `print` and would inform indexers that a contract needs its metadat
 
 Notification messages for each token class are specified below.
 
-#### Fungible Tokens
+## Fungible Tokens
 
 When a contract needs to notify the network that metadata has changed for a **Fungible Token**, it
 shall call `print` with a tuple with the following structure:
@@ -148,7 +148,7 @@ shall call `print` with a tuple with the following structure:
 | `payload.token-class` | The string `"ft"`                                                      |
 | `payload.contract-id` | The contract id (principal) of the contract that declared the token    |
 
-#### Non-Fungible Tokens
+## Non-Fungible Tokens
 
 When a contract needs to notify the network that metadata has changed for a **Non-Fungible Token**,
 it shall call `print` with a tuple with the following structure:
