@@ -127,7 +127,8 @@ This event is then attached to a transaction object and broadcasted when the sam
 included in a block or microblock.
 
 This SIP proposes a standard message structure (similar to a notification payload) that would be
-used through `print` and would inform indexers that a contract needs its metadata refreshed.
+used through `print`. Existing metadata indexers would receive this event through the Stacks node
+RPC, parse its contents, and refresh any contracts that were updated.
 
 # Specification
 
