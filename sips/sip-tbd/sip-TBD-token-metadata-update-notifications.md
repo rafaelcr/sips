@@ -85,9 +85,17 @@ displaying stale metadata in their applications.
 ## Metadata staleness
 
 Within the Stacks ecosystem, there are a number of applications that need to index token metadata
-like an NFT marketplace which needs to display a token's artwork for users to view or a [blockchain
-API](https://github.com/hirosystems/stacks-blockchain-api) which needs to serve FT metadata to
-return account balances correctly.
+and struggle with specific challenges caused by changed metadata. For example:
+
+* An NFT marketplace, which needs to display a token's artwork for users to view.
+  * Presenting a token's icon correctly is difficult given that the `get-token-uri` on-chain
+    variable could change, the off-chain JSON file could change, and/or the image served by the URL
+    could change.
+* A [blockchain API](https://github.com/hirosystems/stacks-blockchain-api), which needs to serve FT
+metadata to return account balances correctly.
+  * Wallets require the on-chain decimals value in order to correctly send and receive tokens.
+    Critical balance draining is possible when this property is zero at contract launch but updated
+    later.
 
 For indexing, developers usually run and maintain a background process that listens for new token
 contracts deployed to the blockchain so they can immediately call on their metadata to save the
