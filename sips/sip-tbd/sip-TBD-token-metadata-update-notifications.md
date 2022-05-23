@@ -98,17 +98,14 @@ To avoid staleness, some indexers resort to a cron-like periodic refresh of all 
 but while this may work for individual applications, it does not provide a consistent experience for
 Stacks users that may interact with different metadata-aware systems with different refresh periods.
 This workaround also adds unnecessary network traffic and creates extra strain on public Stacks
-nodes.
+nodes due to aggressively polling contract-read RPC endpoints.
 
 ## Metadata update notifications
 
 To solve this problem reliably, contract administrators need a way to notify the network when they
 have made changes to the metadata so any indexers may then perform a refresh just for that contract.
-This notification should create a persistent record in the Stacks blockchain so indexers that may be
-unavailable on first broadcast can still receive the message and perform the refresh when they come
-back online.
 
-The proposed mechanism for these notifications makes use of the [`print` Clarity
+The proposed mechanism for these notifications leverages the [`print` Clarity
 language function](https://docs.stacks.co/write-smart-contracts/language-functions#print). When
 used, its output is bundled inside an event of type `contract_event`:
 
