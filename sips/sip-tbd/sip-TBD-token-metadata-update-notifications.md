@@ -127,12 +127,16 @@ This event is then attached to a transaction object and broadcasted when the sam
 included in a block or microblock.
 
 This SIP proposes a standard message structure (similar to a notification payload) that would be
-used through `print`. Existing metadata indexers would receive this event through the Stacks node
-RPC, parse its contents, and refresh any contracts that were updated.
+used through `print`. Existing metadata indexers would receive this event through the [Stacks node
+event-emitter interface](https://github.com/stacks-network/stacks-blockchain/blob/master/docs/event-dispatcher.md#post-new_block),
+parse its contents, and refresh any contracts that were updated.
 
 # Specification
 
-Notification messages for each token class are specified below.
+Notification messages for each token class are specified below. Token metadata update notifications
+must be made via a contract call transaction to the pre-deployed
+[reference contract](#reference-implementations) or from a call to `print` within any other
+contract, including the token contract itself.
 
 ## Fungible Tokens
 
@@ -177,9 +181,43 @@ TBD
 
 # Reference implementations
 
-A [reference contract](./token-metadata-update-notify.clar) has been written that demonstrates how
-to send notifications for each token class. Upon activation of this SIP, this contract will be
-deployed to mainnet and testnet so developers can use them to refresh any token contract.
+A [reference contract](./token-metadata-update-notify.clar) has been deployed to mainnet. It
+demonstrates how to send notifications for each token class and it is available for developers to
+use for refreshing any existing or future token contract. If the SIP evolves to require a change to
+this contract pre-activation, a new one will be deployed and noted here.
+
+```clarity
+;; token-metadata-update-notify
+;;
+;; Use this contract to notify token metadata indexers that an NFT or FT needs its metadata
+;; refreshed.
+
+(use-trait nft-trait 'SP2PABAF9FTAJYNFZH93XENAJ8FVY99RRM50D2JG9.nft-trait.nft-trait)
+(use-trait ft-trait 'SP3FBR2AGK5H9QBDH3EEN6DF8EK8JY7RX8QJ5SVTE.sip-010-trait-ft-standard.sip-010-trait)
+
+;; Refresh the metadata for one or more NFTs from a specific contract.
+(define-public (nft-metadata-update-notify (contract <nft-trait>) (token-ids (list 100 uint)))
+  (ok (print
+    {
+      notification: "token-metadata-update",
+      payload: {
+        contract-id: contract,
+        token-class: "nft",
+        token-ids: token-ids
+      }
+    })))
+
+;; Refresh the metadata for a FT from a specific contract
+(define-public (ft-metadata-update-notify (contract <ft-trait>))
+  (ok (print
+    {
+      notification: "token-metadata-update",
+      payload: {
+        contract-id: contract,
+        token-class: "ft"
+      }
+    })))
+```
 
 The [Stacks Blockchain API](https://github.com/hirosystems/stacks-blockchain-api) will also add
 compatibility for this standard while this SIP is being considered to demonstrate how indexers can
